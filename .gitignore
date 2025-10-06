@@ -1,3 +1,6 @@
+# Local development generated files
+local-development/volumes
+
 #Maven
 target/
 pom.xml.tag
