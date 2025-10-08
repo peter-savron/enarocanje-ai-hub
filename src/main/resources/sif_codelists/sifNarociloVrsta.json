@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "koda": "services",
+    "naziv": "Storitve",
+    "vrRed": 10,
+    "aktivnost": true
+  },
+  {
+    "id": 2,
+    "koda": "supplies",
+    "naziv": "Blago",
+    "vrRed": 20,
+    "aktivnost": true
+  },
+  {
+    "id": 3,
+    "koda": "works",
+    "naziv": "Gradnje",
+    "vrRed": 30,
+    "aktivnost": true
+  }
+]

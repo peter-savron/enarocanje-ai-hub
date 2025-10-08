@@ -1,0 +1,37 @@
+[
+  {
+    "id": 6,
+    "koda": "planning",
+    "naziv": "Načrtovanje",
+    "vrRed": 10,
+    "aktivnost": true
+  },
+  {
+    "id": 3,
+    "koda": "competition",
+    "naziv": "Naročilo",
+    "vrRed": 20,
+    "aktivnost": true
+  },
+  {
+    "id": 5,
+    "koda": "dir-awa-pre",
+    "naziv": "Predhodna transparentnost",
+    "vrRed": 30,
+    "aktivnost": true
+  },
+  {
+    "id": 1,
+    "koda": "result",
+    "naziv": "Rezultat",
+    "vrRed": 40,
+    "aktivnost": true
+  },
+  {
+    "id": 4,
+    "koda": "cont-modif",
+    "naziv": "Sprememba pogodbe",
+    "vrRed": 50,
+    "aktivnost": true
+  }
+]

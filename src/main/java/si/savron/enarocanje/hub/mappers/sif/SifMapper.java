@@ -2,8 +2,6 @@ package si.savron.enarocanje.hub.mappers.sif;
 
 import jakarta.json.JsonObject;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import si.savron.enarocanje.hub.dtos.enarocila.SifGradnikDto;
 import si.savron.enarocanje.hub.dtos.enarocila.SifGradnikPoljeDto;
 import si.savron.enarocanje.hub.dtos.enarocila.SifObrazecDto;

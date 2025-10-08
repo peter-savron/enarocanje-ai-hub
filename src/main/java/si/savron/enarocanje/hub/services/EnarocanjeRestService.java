@@ -1,5 +1,6 @@
 package si.savron.enarocanje.hub.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
@@ -7,11 +8,11 @@ import jakarta.json.JsonValue;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 import si.savron.enarocanje.hub.clients.enarocanje.EnarocanjeClient;
-import si.savron.enarocanje.hub.dtos.enarocila.SifGradnikDto;
-import si.savron.enarocanje.hub.dtos.enarocila.SifObrazecDto;
+import si.savron.enarocanje.hub.dtos.enarocila.*;
 import si.savron.enarocanje.hub.dtos.processed_data.SifGradnikPoljeProcessedData;
 import si.savron.enarocanje.hub.dtos.processed_data.SifObrazecProcessed;
 import si.savron.enarocanje.hub.dtos.processed_data.SifObrazecProcessedWithMetadata;
+import si.savron.enarocanje.hub.dtos.rest.NarocilaQueryRecord;
 import si.savron.enarocanje.hub.mappers.sif.SifMapper;
 
 import java.util.ArrayList;
@@ -23,12 +24,43 @@ public class EnarocanjeRestService {
 
     @Inject
     SifMapper sifMapper;
+    @Inject ObjectMapper objectMapper;
 
     @RestClient
     private EnarocanjeClient enarocanjeClient;
 
-    // TODO map obrazec and sifObrazec, create dto for sif obrazec and Entity with data use ObjectMapper to convert JSON object to ENtity
-    // TODO Create object with merged json and metadata (the entity)
+    public NarocilaQueryResponseDto queryNarocila(NarocilaQueryRecord queryRecord){
+        NarocilaQueryRequestDto requestDto = new NarocilaQueryRequestDto();
+        requestDto.setNarocnikNaziv(queryRecord.narocnikNaziv());
+        requestDto.setNarocnikMaticna(queryRecord.narocnikMaticna());
+        requestDto.setIdSifCpv(queryRecord.idsSifCpv() != null ? queryRecord.idsSifCpv() : List.of());
+        if (queryRecord.datumRok() != null) {
+            requestDto.setDatumRok(queryRecord.datumRok());
+            requestDto.setPrejem(4); // od roka
+        } else {
+            requestDto.setPrejem(1); // rok se ni potekel
+        }
+        requestDto.setPodrejeniCpv(true);
+        requestDto.setIdSifPostopekFaza(List.of(3)); // samo narocila
+        requestDto.setDatumDd(-1); // ne glej dotumov
+
+        requestDto.setPage(queryRecord.pageNumber());
+        requestDto.setStartRow(queryRecord.pageSize() * (queryRecord.pageNumber() - 1));
+        requestDto.setEndRow(queryRecord.pageSize() * queryRecord.pageNumber());
+
+        NarocilaQueryRequestSortDto sortDto = new NarocilaQueryRequestSortDto();
+        sortDto.setColId("objavaDejanskaDatum");
+        sortDto.setSort("desc");
+        requestDto.setSortModel(List.of(sortDto));
+        try {
+            LOG.info(objectMapper.writer().writeValueAsString(requestDto));
+        } catch (Exception e) {
+            LOG.info("error happened");
+        }
+        return enarocanjeClient.queryNarocila(requestDto, "application/json; charset=utf-8");
+    }
+
+    // TODO update razpis each time duplicate is old (once per day)
 
     // TODO add documents integration with unzipping etc. apache tika
 
@@ -99,7 +131,8 @@ public class EnarocanjeRestService {
         }
     }
     private void processData(SifObrazecProcessed processed, SifGradnikDto gradnik, JsonObject obrazec){
-        // TODO code ids are not handled (dropdowns) et similar
+        // TODO code ids are not handled (dropdowns) et similar add codelists
+        // TODO catch links and find the one with documentation type "URLUpload"
         List<SifGradnikPoljeProcessedData> data = new ArrayList<>();
         for (var polje :gradnik.sifObrazecGradnikPolje()) {
             var processedPolje = sifMapper.fromSifGradnikPoljeDto(polje);

@@ -4,10 +4,19 @@ import jakarta.json.JsonObject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+import si.savron.enarocanje.hub.dtos.enarocila.NarocilaQueryRequestDto;
+import si.savron.enarocanje.hub.dtos.enarocila.NarocilaQueryResponseDto;
 import si.savron.enarocanje.hub.dtos.enarocila.SifObrazecDto;
 
 @RegisterRestClient(configKey = "enarocanje")
 public interface EnarocanjeClient {
+
+    @POST
+    @Path("/api/obrazec/objava/obrazecGetGrid")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    NarocilaQueryResponseDto queryNarocila(NarocilaQueryRequestDto narocilaQueryRequestDto, @HeaderParam("Content-Type") String contentType);
+
     @GET
     @Path("/api/obrazec/objava/obrazecGet")
     @Produces(MediaType.APPLICATION_JSON)
