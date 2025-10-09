@@ -31,6 +31,15 @@ public class TenderResource {
         return Response.ok(enarocanjeRestService.fetchZipStream(url)).build();
     }
 
+    @POST
+    @IfBuildProfile("dev")
+    @Path("/documents/filenames")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response getDocumentFileNames(String url) throws Exception{
+        return Response.ok(enarocanjeRestService.getFilenames(url)).build();
+    }
+
     @GET
     @IfBuildProfile("dev")
     @Path("/narocila/{obrazecId}")

@@ -31,9 +31,14 @@ public class EnarocanjeRestService {
     @Inject
     SifMapper sifMapper;
     @Inject ObjectMapper objectMapper;
+    @Inject FileReaderService fileReaderService;
 
     @RestClient
     private EnarocanjeClient enarocanjeClient;
+
+    public List<String> getFilenames(String zipUrl) throws Exception {
+        return fileReaderService.getFileNames(fetchZipStream(zipUrl));
+    }
 
     public NarocilaQueryResponseDto queryNarocila(NarocilaQueryRecord queryRecord){
         NarocilaQueryRequestDto requestDto = new NarocilaQueryRequestDto();
