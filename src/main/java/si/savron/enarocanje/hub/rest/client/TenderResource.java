@@ -1,6 +1,8 @@
 package si.savron.enarocanje.hub.rest.client;
 
 import io.quarkus.arc.profile.IfBuildProfile;
+import io.smallrye.mutiny.Uni;
+import io.vertx.mutiny.core.buffer.Buffer;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -18,6 +20,15 @@ public class TenderResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryNarocila(NarocilaQueryRecord narocilaQueryRecord){
         return Response.ok(enarocanjeRestService.queryNarocila(narocilaQueryRecord)).build();
+    }
+
+    @POST
+    @IfBuildProfile("dev")
+    @Path("/documents")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Uni<Buffer> getDocuments(String url){
+        return enarocanjeRestService.fetchZipStream(url);
     }
 
     @GET

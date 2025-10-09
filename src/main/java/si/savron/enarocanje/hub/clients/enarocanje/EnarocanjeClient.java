@@ -8,6 +8,8 @@ import si.savron.enarocanje.hub.dtos.enarocila.NarocilaQueryRequestDto;
 import si.savron.enarocanje.hub.dtos.enarocila.NarocilaQueryResponseDto;
 import si.savron.enarocanje.hub.dtos.enarocila.SifObrazecDto;
 
+import java.io.InputStream;
+
 @RegisterRestClient(configKey = "enarocanje")
 public interface EnarocanjeClient {
 
@@ -16,6 +18,10 @@ public interface EnarocanjeClient {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     NarocilaQueryResponseDto queryNarocila(NarocilaQueryRequestDto narocilaQueryRequestDto, @HeaderParam("Content-Type") String contentType);
+
+    @GET
+    @Path("/api/datoteka/get")
+    InputStream getDocument(@QueryParam("id") String documentId);
 
     @GET
     @Path("/api/obrazec/objava/obrazecGet")

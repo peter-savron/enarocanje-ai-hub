@@ -1,6 +1,11 @@
 package si.savron.enarocanje.hub.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.smallrye.mutiny.Uni;
+import io.vertx.ext.web.client.WebClientOptions;
+import io.vertx.mutiny.core.Vertx;
+import io.vertx.mutiny.core.buffer.Buffer;
+import io.vertx.mutiny.ext.web.client.WebClient;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
@@ -15,12 +20,21 @@ import si.savron.enarocanje.hub.dtos.processed_data.SifObrazecProcessedWithMetad
 import si.savron.enarocanje.hub.dtos.rest.NarocilaQueryRecord;
 import si.savron.enarocanje.hub.mappers.sif.SifMapper;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
 public class EnarocanjeRestService {
     private final Logger LOG = Logger.getLogger(EnarocanjeRestService.class);
+    private final WebClient webClient;
+
+    @Inject
+    public EnarocanjeRestService(Vertx vertx) {
+        WebClientOptions options = new WebClientOptions()
+                .setConnectTimeout((int) Duration.ofSeconds(10).toMillis());
+        this.webClient = WebClient.create(vertx, options);
+    }
 
     @Inject
     SifMapper sifMapper;
@@ -63,6 +77,33 @@ public class EnarocanjeRestService {
     // TODO update razpis each time duplicate is old (once per day)
 
     // TODO add documents integration with unzipping etc. apache tika
+    /**
+     * Sends a GET request to the specified URL and returns the response body as an InputStream.
+     * This is the "get returned zip folder as input stream" logic.
+     * * @param zipUrl The full URL of the service returning the ZIP file.
+     * @return A Uni that emits the InputStream containing the ZIP data.
+     */
+    public Uni<Buffer> fetchZipStream(String zipUrl) {
+        // TODO get zip file name, add validation of url (match start with start of url)
+        // TODO get link directly in objava link
+        // TODO unzip and convert documents
+        // TODO vectorize snd store to VDB
+        // TODO analyse documents with AI to get menaingful info
+        return webClient.getAbs(zipUrl).send().onItem()
+                .transform(response -> {
+
+                            // Check the status code. If it's not successful, throw an exception.
+                            if (response.statusCode() != 200) {
+                                throw new RuntimeException(
+                                        "Request failed with status: " + response.statusCode() +
+                                                " body: " + response.bodyAsString()
+                                );
+                            }
+
+                            // Transform the HttpResponse body (which is a Buffer) into a String
+                            return response.bodyAsBuffer();
+                });
+    }
 
     // TODO store to minio documents
 
