@@ -27,8 +27,8 @@ public class TenderResource {
     @Path("/documents")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Consumes(MediaType.TEXT_PLAIN)
-    public Uni<Buffer> getDocuments(String url){
-        return enarocanjeRestService.fetchZipStream(url);
+    public Response getDocuments(String url) throws Exception{
+        return Response.ok(enarocanjeRestService.fetchZipStream(url)).build();
     }
 
     @GET
