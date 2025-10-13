@@ -1,5 +1,7 @@
 package si.savron.enarocanje.hub.services;
 
+import static si.savron.enarocanje.hub.utils.HeaderUtils.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -13,14 +15,13 @@ import si.savron.enarocanje.hub.dtos.enarocila.*;
 import si.savron.enarocanje.hub.dtos.processed_data.SifGradnikPoljeProcessedData;
 import si.savron.enarocanje.hub.dtos.processed_data.SifObrazecProcessed;
 import si.savron.enarocanje.hub.dtos.processed_data.SifObrazecProcessedWithMetadata;
+import si.savron.enarocanje.hub.dtos.processed_data.TextFileWithMetadata;
 import si.savron.enarocanje.hub.dtos.rest.NarocilaQueryRecord;
 import si.savron.enarocanje.hub.mappers.sif.SifMapper;
 
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class EnarocanjeRestService {
     @RestClient
     private EnarocanjeClient enarocanjeClient;
 
-    public List<String> getFilenames(String zipUrl) throws Exception {
+    public List<TextFileWithMetadata> getFilenames(String zipUrl) throws Exception {
         return fileReaderService.getFileNames(fetchZipStream(zipUrl));
     }
 
@@ -80,7 +81,7 @@ public class EnarocanjeRestService {
      * * @param zipUrl The full URL of the service returning the ZIP file.
      * @return A Uni that emits the InputStream containing the ZIP data.
      */
-    public InputStream fetchZipStream(String zipUrl) throws Exception {
+    public NarocilaZipDocumentation fetchZipStream(String zipUrl) {
         try {
             URL url = new URI(zipUrl).toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -89,13 +90,20 @@ public class EnarocanjeRestService {
             connection.setReadTimeout(30_000);
 
             if (Response.Status.Family.familyOf(connection.getResponseCode()) == Response.Status.Family.SUCCESSFUL){
-                return connection.getInputStream();
+                NarocilaZipDocumentation documentation = new NarocilaZipDocumentation();
+                documentation.setZipFolderName(
+                        filenameFromContentDisposition(
+                                connection.getHeaderField(CONTENT_DISPOSITION)
+                        )
+                );
+                documentation.setZipStream(connection.getInputStream());
+                return documentation;
             } else {
                 throw new RuntimeException();
             }
         } catch (Exception e) {
             LOG.info("Error occurred");
-            throw e;
+            throw new RuntimeException(e);
         }
     }
 

@@ -22,29 +22,36 @@ store other razpis data
 ### documentation
 
 map data in object storage to db with some metadata
+extract zip (DONE)
+read filename, (DONE)
+file content  with apache-tika (DONE)
+guess encoding with juniversalchardet (smaller, faster) or ICU4J (heavier, more robust, more recent) (DONE)
 
 ## data fetching
 
 Pridobivanje podatkov iz portala https://www.enarocanje.si.
+Pridobi link do dokumentacije iz data objecta, should be trivialno
 
 ### obrazci (json)
 
 Mapiraj podatke v podatkovno bazo in jih pripravi za shranjevanje, integriraj code list, 
 preveri tehtnost noSQL DB-ja. Podatki iz `/api/sifObrazec/sifObrazecGet?idObrazec=948086`
+Pridobi urlje, mappaj vazne podatke v metadata
 
 ### dokumantacija (datoteke)
 
-Pridobi datoteke iz danih linkov, kot prvo samo iz 
+Pridobi datoteke iz danih linkov, kot prvo samo iz (DONE)
 `/api/datoteka/get?id=NDA0MDQ5O1JhenBpc25hIGRva3VtZW50YWNpamEuemlw`
-preberi tip datoteke iz Content-Disposition headerja in vsebino pahandlaj.
+preberi tip datoteke iz Content-Disposition headerja in vsebino pahandlaj.(DONE)
+Dodaj pametne metapodatke
 
 #### Unzipping
 
-Ustvari util za unzippanje in branje dokumentov
+Ustvari util za unzippanje in branje dokumentov (DONE)
 
 #### Documant parsing to machine readable code (Apache Tika)
 
-Z Apache Tika preberi in pretvori pridobljene dokumente.
+Z Apache Tika preberi in pretvori pridobljene dokumente. (DONE)
 
 ## data storage
 
@@ -63,3 +70,11 @@ noSQL or SQL? store data for common scalar search with filters, mapping to objec
 ### Object db
 
 Integration with minio/S3
+
+## Microservices
+
+Separate data fetching from external sites with document processing (decode and transform to Text)
+
+### Common data models
+
+Create a common library with common models

@@ -108,6 +108,11 @@
             <artifactId>commons-compress</artifactId>
             <version>1.28.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.googlecode.juniversalchardet</groupId>
+            <artifactId>juniversalchardet</artifactId>
+            <version>1.0.3</version>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>

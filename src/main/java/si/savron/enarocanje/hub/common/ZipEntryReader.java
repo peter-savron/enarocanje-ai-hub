@@ -1,9 +1,9 @@
 package si.savron.enarocanje.hub.common;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -13,10 +13,11 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 
-public class ZipEntryReader implements Iterable<ZipEntry>, AutoCloseable {
+public class ZipEntryReader implements Iterable<ZipArchiveEntry>, AutoCloseable {
 
         private final ZipArchiveInputStream zis;
-        private ZipEntry nextEntry;
+        private ZipArchiveEntry nextEntry;
+        private ByteArrayOutputStream currentFile;
         private boolean finished;
 
         public ZipEntryReader(InputStream in) {
@@ -25,7 +26,7 @@ public class ZipEntryReader implements Iterable<ZipEntry>, AutoCloseable {
         }
 
         @Override
-        public Iterator<ZipEntry> iterator() {
+        public Iterator<ZipArchiveEntry> iterator() {
             return new Iterator<>() {
                 @Override
                 public boolean hasNext() {
@@ -49,9 +50,10 @@ public class ZipEntryReader implements Iterable<ZipEntry>, AutoCloseable {
                 }
 
                 @Override
-                public ZipEntry next() {
+                public ZipArchiveEntry next() {
                     if (!hasNext()) throw new NoSuchElementException();
-                    ZipEntry current = nextEntry;
+                    ZipArchiveEntry current = nextEntry;
+                    readCurrentFile();
                     nextEntry = null;
                     return current;
                 }
@@ -74,5 +76,24 @@ public class ZipEntryReader implements Iterable<ZipEntry>, AutoCloseable {
     @Override
     public void close() throws IOException {
         zis.close();
+    }
+
+    public ByteArrayOutputStream getCurrentFile(){
+            return currentFile;
+    }
+
+    private void readCurrentFile() {
+        currentFile = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int len;
+
+        try {
+            while ((len = zis.read(buffer)) > 0) {
+                currentFile.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            currentFile = null;
+            throw new RuntimeException(e);
+        }
     }
 }
