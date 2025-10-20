@@ -19,6 +19,11 @@ public interface EnarocanjeClient {
     @Consumes(MediaType.APPLICATION_JSON)
     NarocilaQueryResponseDto queryNarocila(NarocilaQueryRequestDto narocilaQueryRequestDto, @HeaderParam("Content-Type") String contentType);
 
+    /**
+     * Unused because using directly connection
+     * @param documentId
+     * @return
+     */
     @GET
     @Path("/api/datoteka/get")
     InputStream getDocument(@QueryParam("id") String documentId);

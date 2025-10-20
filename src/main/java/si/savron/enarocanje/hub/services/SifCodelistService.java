@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import si.savron.enarocanje.hub.dtos.enarocila.SifChildlessCodelistEntryRecord;
 import si.savron.enarocanje.hub.dtos.enarocila.SifCodelistEntry;
 import si.savron.enarocanje.hub.dtos.enarocila.SifCodelistEntryRecord;
+import si.savron.enarocanje.hub.dtos.enarocila.SifCodelistSloEntry;
 import si.savron.enarocanje.hub.mappers.sif.SifCodelistMapper;
 
 import java.io.IOException;
@@ -32,8 +33,8 @@ public class SifCodelistService {
     public void initializeCodelists() throws IOException {
         // TODO better handling of json filenames
         sifCpvCodelist = readCodelist(SIF_CODELIST + "sifCpv.json");
-        sifNarociloVrstaCodelist = readCodelist(SIF_CODELIST + "sifNarociloVrsta.json");
-        sifPostopekFazaCodelist = readCodelist(SIF_CODELIST + "sifPostopekFaza.json");
+        sifNarociloVrstaCodelist = readCodelistSlo(SIF_CODELIST + "sifNarociloVrsta.json");
+        sifPostopekFazaCodelist = readCodelistSlo(SIF_CODELIST + "sifPostopekFaza.json");
 
         sifCpvCodemap = createCodelistMap(sifCpvCodelist);
     }
@@ -60,6 +61,18 @@ public class SifCodelistService {
                 throw new IOException("Resource file not found: " + codelistFileName);
             }
             return objectMapper.readValue(is, new TypeReference<List<SifCodelistEntry>>() {});
+        } catch (Exception e) {
+            // Log the error or handle it as necessary
+            throw new IOException("Failed to read or parse JSON file: " + codelistFileName, e);
+        }
+    }
+
+    private List<SifCodelistEntry> readCodelistSlo(String codelistFileName) throws IOException {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(codelistFileName)) {
+            if (is == null) {
+                throw new IOException("Resource file not found: " + codelistFileName);
+            }
+            return codelistMapper.toEng(objectMapper.readValue(is, new TypeReference<List<SifCodelistSloEntry>>() {}));
         } catch (Exception e) {
             // Log the error or handle it as necessary
             throw new IOException("Failed to read or parse JSON file: " + codelistFileName, e);

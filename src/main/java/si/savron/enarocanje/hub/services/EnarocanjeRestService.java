@@ -11,13 +11,15 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 import si.savron.enarocanje.hub.clients.enarocanje.EnarocanjeClient;
+import si.savron.enarocanje.hub.common.services.DocumentFetchService;
+import si.savron.enarocanje.hub.common.services.FileReaderService;
 import si.savron.enarocanje.hub.dtos.enarocila.*;
 import si.savron.enarocanje.hub.dtos.processed_data.SifGradnikPoljeProcessedData;
 import si.savron.enarocanje.hub.dtos.processed_data.SifObrazecProcessed;
 import si.savron.enarocanje.hub.dtos.processed_data.SifObrazecProcessedWithMetadata;
-import si.savron.enarocanje.hub.dtos.processed_data.TextFileWithMetadata;
 import si.savron.enarocanje.hub.dtos.rest.NarocilaQueryRecord;
 import si.savron.enarocanje.hub.mappers.sif.SifMapper;
+import si.savron.enarocanje.hub.models.NarociloEntity;
 
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -29,18 +31,19 @@ import java.util.List;
 public class EnarocanjeRestService {
     private final Logger LOG = Logger.getLogger(EnarocanjeRestService.class);
 
-    @Inject
-    SifMapper sifMapper;
+    @Inject SifMapper sifMapper;
     @Inject ObjectMapper objectMapper;
     @Inject FileReaderService fileReaderService;
+    @Inject DocumentFetchService documentFetchService;
 
     @RestClient
     private EnarocanjeClient enarocanjeClient;
 
-    public List<TextFileWithMetadata> getFilenames(String zipUrl) throws Exception {
-        return fileReaderService.getFileNames(fetchZipStream(zipUrl));
-    }
-
+    /**
+     * Gets paginated narocila corresonding to query
+     * @param queryRecord search parameters
+     * @return paginated narocila that correspond to searc
+     */
     public NarocilaQueryResponseDto queryNarocila(NarocilaQueryRecord queryRecord){
         NarocilaQueryRequestDto requestDto = new NarocilaQueryRequestDto();
         requestDto.setNarocnikNaziv(queryRecord.narocnikNaziv());
@@ -74,54 +77,14 @@ public class EnarocanjeRestService {
 
     // TODO update razpis each time duplicate is old (once per day)
 
-    // TODO add documents integration with unzipping etc. apache tika
     /**
-     * Sends a GET request to the specified URL and returns the response body as an InputStream.
-     * This is the "get returned zip folder as input stream" logic.
-     * * @param zipUrl The full URL of the service returning the ZIP file.
-     * @return A Uni that emits the InputStream containing the ZIP data.
-     */
-    public NarocilaZipDocumentation fetchZipStream(String zipUrl) {
-        try {
-            URL url = new URI(zipUrl).toURL();
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(10_000);
-            connection.setReadTimeout(30_000);
-
-            if (Response.Status.Family.familyOf(connection.getResponseCode()) == Response.Status.Family.SUCCESSFUL){
-                NarocilaZipDocumentation documentation = new NarocilaZipDocumentation();
-                documentation.setZipFolderName(
-                        filenameFromContentDisposition(
-                                connection.getHeaderField(CONTENT_DISPOSITION)
-                        )
-                );
-                documentation.setZipStream(connection.getInputStream());
-                return documentation;
-            } else {
-                throw new RuntimeException();
-            }
-        } catch (Exception e) {
-            LOG.info("Error occurred");
-            throw new RuntimeException(e);
-        }
-    }
-
-    // TODO store to minio documents
-
-    public SifObrazecDto testIntegration(Integer id){
-        var obrazec = enarocanjeClient.obrazecGet(id);
-        LOG.info("OBRAZEC: " + obrazec.toString());
-        return enarocanjeClient.sifObrazecGet(id);
-    }
-
-    /**
+     * Returns base data about narocilo with metadatra
      * @return processed data (unneccessary fields cutted)
      */
     public SifObrazecProcessedWithMetadata processSifObrazec(Integer obrazecId){
         var obrazec = enarocanjeClient.obrazecGet(obrazecId);
         var sifObrazec = enarocanjeClient.sifObrazecGet(obrazecId);
-        SifObrazecProcessedWithMetadata processedData = new SifObrazecProcessedWithMetadata();
+        SifObrazecProcessedWithMetadata processedData = new SifObrazecProcessedWithMetadata(obrazec);
         SifObrazecProcessed content = sifMapper.fromSifObrazecDto(sifObrazec);
         content.setChildren(new ArrayList<>());
         for (var oddelek : sifObrazec.sifOddelek()){
@@ -173,6 +136,7 @@ public class EnarocanjeRestService {
             return gradnikiProcessed;
         }
     }
+
     private void processData(SifObrazecProcessed processed, SifGradnikDto gradnik, JsonObject obrazec){
         // TODO code ids are not handled (dropdowns) et similar add codelists
         // TODO catch links and find the one with documentation type "URLUpload"

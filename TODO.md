@@ -21,7 +21,7 @@ store other razpis data
 
 ### documentation
 
-map data in object storage to db with some metadata
+map data in object storage to db with some metadata (DONE)
 extract zip (DONE)
 read filename, (DONE)
 file content  with apache-tika (DONE)
@@ -29,21 +29,21 @@ guess encoding with juniversalchardet (smaller, faster) or ICU4J (heavier, more 
 
 ## data fetching
 
-Pridobivanje podatkov iz portala https://www.enarocanje.si.
-Pridobi link do dokumentacije iz data objecta, should be trivialno
+Pridobivanje podatkov iz portala https://www.enarocanje.si. (PARTIALLY_DONE)
+Pridobi link do dokumentacije iz data objecta, should be trivialno (DONE)
 
 ### obrazci (json)
 
-Mapiraj podatke v podatkovno bazo in jih pripravi za shranjevanje, integriraj code list, 
-preveri tehtnost noSQL DB-ja. Podatki iz `/api/sifObrazec/sifObrazecGet?idObrazec=948086`
-Pridobi urlje, mappaj vazne podatke v metadata
+Mapiraj podatke v podatkovno bazo in jih pripravi za shranjevanje, integriraj code list, (DONE) 
+preveri tehtnost noSQL DB-ja. Podatki iz `/api/sifObrazec/sifObrazecGet?idObrazec=948086` (DONE)
+Pridobi urlje, mappaj vazne podatke v metadata (DONE) 
 
 ### dokumantacija (datoteke)
 
 Pridobi datoteke iz danih linkov, kot prvo samo iz (DONE)
 `/api/datoteka/get?id=NDA0MDQ5O1JhenBpc25hIGRva3VtZW50YWNpamEuemlw`
 preberi tip datoteke iz Content-Disposition headerja in vsebino pahandlaj.(DONE)
-Dodaj pametne metapodatke
+Dodaj pametne metapodatke (DONE)
 
 #### Unzipping
 
@@ -65,16 +65,23 @@ Integrate with embedding service
 
 ### Scalar db
 
-noSQL or SQL? store data for common scalar search with filters, mapping to object storage
+noSQL or SQL? store data for common scalar search with filters, mapping to object storage (DONE)
+auto generate schemas, then liquibase (DROPPED)
+create quick sql db for testing purposes (DONE)
+switch to NoSQL and give option to create schema for each source and custom searches
 
 ### Object db
 
-Integration with minio/S3
+Integration with minio/S3 (DONE)
 
 ## Microservices
 
-Separate data fetching from external sites with document processing (decode and transform to Text)
+Separate data fetching from external sites with document processing (decode and transform to Text) (DONE)
 
 ### Common data models
 
 Create a common library with common models
+
+## Message queue for file processing
+
+process file to text by queue
