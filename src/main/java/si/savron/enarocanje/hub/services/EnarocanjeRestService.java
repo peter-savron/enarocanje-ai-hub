@@ -1,29 +1,22 @@
 package si.savron.enarocanje.hub.services;
 
-import static si.savron.enarocanje.hub.utils.HeaderUtils.*;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 import si.savron.enarocanje.hub.clients.enarocanje.EnarocanjeClient;
-import si.savron.enarocanje.hub.common.services.DocumentFetchService;
-import si.savron.enarocanje.hub.common.services.FileReaderService;
+import si.savron.enarocanje.hub.common.fetching.DocumentFetchService;
+import si.savron.enarocanje.hub.common.fetching.FileReaderService;
 import si.savron.enarocanje.hub.dtos.enarocila.*;
 import si.savron.enarocanje.hub.dtos.processed_data.SifGradnikPoljeProcessedData;
 import si.savron.enarocanje.hub.dtos.processed_data.SifObrazecProcessed;
 import si.savron.enarocanje.hub.dtos.processed_data.SifObrazecProcessedWithMetadata;
 import si.savron.enarocanje.hub.dtos.rest.NarocilaQueryRecord;
 import si.savron.enarocanje.hub.mappers.sif.SifMapper;
-import si.savron.enarocanje.hub.models.NarociloEntity;
 
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package si.savron.enarocanje.hub.common;
+package si.savron.enarocanje.hub.common.fetching;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;

@@ -5,15 +5,12 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
-import si.savron.enarocanje.hub.common.services.DocumentFetchService;
-import si.savron.enarocanje.hub.common.services.FileProcessingService;
-import si.savron.enarocanje.hub.common.services.FileReaderService;
+import si.savron.enarocanje.hub.common.fetching.DocumentFetchService;
+import si.savron.enarocanje.hub.common.processing.FileProcessingService;
+import si.savron.enarocanje.hub.common.fetching.FileReaderService;
 import si.savron.enarocanje.hub.dtos.processed_data.SifObrazecProcessedWithMetadata;
 import si.savron.enarocanje.hub.mappers.sif.SifMapper;
-import si.savron.enarocanje.hub.models.DocumentEntity;
 import si.savron.enarocanje.hub.models.NarociloEntity;
-
-import java.util.List;
 
 /**
  * Serves the purpose of replicating enarocila and storing them in the ai-hub

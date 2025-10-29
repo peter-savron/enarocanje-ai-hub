@@ -1,4 +1,4 @@
-package si.savron.enarocanje.hub.common.services;
+package si.savron.enarocanje.hub.common.fetching;
 
 import static si.savron.enarocanje.hub.utils.StringDecodingUtils.*;
 
@@ -6,9 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import si.savron.enarocanje.hub.common.ZipEntryReader;
 import si.savron.enarocanje.hub.dtos.enarocila.ZipDocumentation;
-import si.savron.enarocanje.hub.dtos.processed_data.FileMetadata;
 import si.savron.enarocanje.hub.models.DocumentEntity;
 import si.savron.enarocanje.hub.models.NarociloEntity;
 
@@ -18,13 +16,14 @@ import java.util.List;
 
 @ApplicationScoped
 public class FileReaderService {
-    @Inject FileStorageService fileStorageService;
+    @Inject
+    FileStorageService fileStorageService;
     @Inject EntityManager em;
 
     /**
-     * Reads files
-     * @param zipFolder
-     * @return
+     * Reads files and stores in object storage
+     * @param zipFolder folder with files
+     * @return entity with all data regarding stored files
      */
     @Transactional
     public NarociloEntity extractZipFolder(ZipDocumentation zipFolder, NarociloEntity narociloEntity) {

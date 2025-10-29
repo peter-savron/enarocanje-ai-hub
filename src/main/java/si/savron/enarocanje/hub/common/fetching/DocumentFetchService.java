@@ -1,4 +1,4 @@
-package si.savron.enarocanje.hub.common.services;
+package si.savron.enarocanje.hub.common.fetching;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.core.Response;
@@ -14,18 +14,21 @@ import static si.savron.enarocanje.hub.utils.HeaderUtils.filenameFromContentDisp
 
 // Rename to data fetch service and adapt to any type of data (ZIP, TEXT, AUD, IMG, VID)
 
+/**
+ * Scope of this class is to retrieve the most doc types possible and store them for processing.
+ */
 @ApplicationScoped
 public class DocumentFetchService {
     private final Logger LOG = Logger.getLogger(DocumentFetchService.class);
 
-    // TODO add documents integration with unzipping etc. apache tika
     /**
      * Sends a GET request to the specified URL and returns the response body as an InputStream.
      * This is the "get returned zip folder as input stream" logic.
      * * @param zipUrl The full URL of the service returning the ZIP file.
      * @return A Uni that emits the InputStream containing the ZIP data.
      */
-    // TODO move metodto common
+    // TODO move method to common
+    // TODO fetch whatever url returns and adapt to type
     public ZipDocumentation fetchZipStream(String zipUrl) {
         try {
             URL url = new URI(zipUrl).toURL();

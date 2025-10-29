@@ -1,4 +1,4 @@
-package si.savron.enarocanje.hub.common.services;
+package si.savron.enarocanje.hub.common.processing;
 
 import static si.savron.enarocanje.hub.utils.FileConversionUtil.*;
 
@@ -6,24 +6,24 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import si.savron.enarocanje.hub.common.ZipEntryReader;
+import si.savron.enarocanje.hub.common.fetching.FileReaderService;
+import si.savron.enarocanje.hub.common.fetching.FileStorageService;
 import si.savron.enarocanje.hub.config.BucketConfig;
-import si.savron.enarocanje.hub.dtos.enarocila.ZipDocumentation;
 import si.savron.enarocanje.hub.models.DocumentEntity;
 import si.savron.enarocanje.hub.models.NarociloEntity;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-
+/**
+ * Scope of this class is to retrieve raw document and to process it to most optimal size and form
+ * for feeding to LLM models.
+ */
 @ApplicationScoped
 public class FileProcessingService {
-    @Inject FileReaderService fileReaderService;
-    @Inject FileStorageService fileStorageService;
+    @Inject
+    FileReaderService fileReaderService;
+    @Inject
+    FileStorageService fileStorageService;
     @Inject EntityManager em;
     @Inject BucketConfig bucketConfig;
     @Inject S3Client s3Client;

@@ -1,14 +1,10 @@
-package si.savron.enarocanje.hub.common.services;
+package si.savron.enarocanje.hub.common.fetching;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.MediaType;
 import si.savron.enarocanje.hub.config.BucketConfig;
-import si.savron.enarocanje.hub.dtos.processed_data.FileMetadata;
-import si.savron.enarocanje.hub.models.DocumentEntity;
-import si.savron.enarocanje.hub.models.NarociloEntity;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Bucket;

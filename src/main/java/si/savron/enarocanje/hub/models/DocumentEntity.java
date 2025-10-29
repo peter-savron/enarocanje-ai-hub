@@ -15,6 +15,8 @@ public class DocumentEntity extends BaseEntity {
     private boolean stored;
     @Column(name="processed")
     private boolean processed;
+    @Column(name ="stored_vdb")
+    private boolean storedInVectorDB;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "narocilo_id", nullable = false)
@@ -76,5 +78,13 @@ public class DocumentEntity extends BaseEntity {
 
     public void setProcessed(boolean processed) {
         this.processed = processed;
+    }
+
+    public boolean isStoredInVectorDB() {
+        return storedInVectorDB;
+    }
+
+    public void setStoredInVectorDB(boolean storedInVectorDB) {
+        this.storedInVectorDB = storedInVectorDB;
     }
 }
