@@ -15,7 +15,7 @@ public class GsonProducer {
 
     @Produces
     @ApplicationScoped
-    public Gson produceMilvusClientPool() {
+    public Gson produceGson() {
         return new Gson();
     }
 }
