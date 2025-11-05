@@ -10,6 +10,7 @@ import java.io.StringWriter;
  * Contains methods to convert files from byte formats like PDF, DOCX etc.
  * to text formats like MD, CSV etc.
  */
+// TODO modify to service
 public class FileConversionUtil {
     private static final Tika tika = new Tika();
 

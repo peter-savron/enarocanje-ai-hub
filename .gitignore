@@ -1,3 +1,6 @@
+# initialization script
+milvus_init.yaml
+
 # Local development generated files
 local-development/volumes
 

@@ -7,11 +7,16 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import si.savron.enarocanje.hub.models.vdb.ChunkVdbEntity;
+
+import java.util.UUID;
 
 @IfBuildProfile("dev")
 @Path("/dev/processing")
 public class ProcessingDevApi {
     @Inject TextSplittingService textSplittingService;
+    @Inject TextEmbeddingService textEmbeddingService;
+    @Inject VectorStorageService vectorStorageService;
 
     @POST
     @Path("/split-plaintext")
@@ -22,4 +27,21 @@ public class ProcessingDevApi {
         ).build();
     }
 
+    @POST
+    @Path("/embed-plaintext")
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response embedPlaintext(String plaintext) {
+        return Response.ok(
+                textEmbeddingService.embed(plaintext)
+        ).build();
+    }
+
+    @POST
+    @Path("/insert-plaintext")
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response storeEmbedding(String plaintext) {
+        vectorStorageService.storePlaintext(plaintext);
+        return Response.ok(
+        ).build();
+    }
 }

@@ -1,0 +1,94 @@
+# wondering about codes for types? Check https://milvus.io/api-reference/pymilvus/v2.5.x/MilvusClient/Collections/DataType.md
+#  example field schema with all possible configs, refer to https://milvus.io/api-reference/pymilvus/v2.5.x/ORM/CollectionSchema/add_field.md
+#  field:
+#      name: id
+#      type: 101
+#      nullable: true
+#      is_partition_key: true
+#      element_type: 21
+#      is_primary: true
+#      params:
+#        max_length: 100
+#        mmap_enabled: true
+#        dim: 114
+#        max_capacity: 10
+#        default_value: 100
+#  for details on index https://milvus.io/api-reference/pymilvus/v2.5.x/ORM/Collection/create_index.md
+#  on float index https://milvus.io/docs/index.md?tab=floating
+#  on scalar index https://milvus.io/docs/index-scalar-fields.md
+milvus:
+  uri: http://localhost:19530
+  token: root:Milvus
+  password: Milvus
+  new-password: Milvus
+  privilege-groups:
+    write: [ Insert, Delete, Upsert ]
+    read: [ Query, Search ]
+  roles:
+    write_km_data:
+      privileges:
+        write:
+          collection: data
+          db: km
+    read_km_data:
+      privileges:
+        read:
+          collection: data
+          db: km
+  users:
+    - name: reader
+      password: Quarkus123
+      roles: [read]
+    - name: writer
+      password: Quarkus123
+      roles: [read, write]
+  databases:
+    ai_hub:
+      collections:
+        data:
+          drop-old: true
+          partition-key-settings:
+            num-partitions: 16  # max 1024
+            partitionkey-isolation: True
+            #  TODO add num_shards
+          schema:
+          # TODO add functions to schemas
+            enable-dynamic-field: true
+            # TODO add mmap conf
+            fields:
+            - name: id
+              type: 21
+              is_primary: true
+              auto_id: false
+              params:
+                max_length: 64
+            - name: embedding
+              type: 101
+              params:
+                dim: 512
+            - name: source_id
+              type: 21
+              is_partition_key: true
+              params:
+                max_length: 64
+            - name: data_id
+              type: 21
+              params:
+                max_length: 64
+            - name: text
+              type: 21
+              params:
+                max_length: 64000
+                mmap_enabled: true
+          indexes:
+          - vector:
+            name: main_indx
+            field-name: embedding
+            type: IVF_SQ8
+            metric-type: COSINE
+            params:
+              nlist: 32
+          - name: id_indx
+            field-name: id
+          - name: data_id_indx
+            field-name: data_id

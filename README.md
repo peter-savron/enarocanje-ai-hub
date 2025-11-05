@@ -22,6 +22,10 @@ docker compose up -D
 ### Minio
 Ui is available at http://localhost:9011. User `admin` password `Quarkus123`.
 
+### Milvus
+UI available at http://localhost:9091/webui/
+Initialization done via python script for now.
+
 ### PostgreSQL
 You can access adminer at 
 
